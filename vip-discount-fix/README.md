@@ -1,47 +1,40 @@
-# VIP 折扣互斥修复
+# 子比主题自定义修改
 
-## 问题描述
+## 功能列表
 
-星冕会员（VIP2）购买商品时，同时享受了"极光会员7折"和"星冕会员5折"两个折扣，导致最终折扣变成 35折（0.5×0.7）而非预期的 5折。
+### 1. VIP折扣互斥
+解决星冕会员（VIP2）同时享受5折和7折的问题。
 
-## 解决方案
+### 2. 数量限制功能
+新增"满N件可用"的优惠限制条件。
 
-将后台"VIP1及以上"选项的判断逻辑从 `>=1` 改为 `==1`，使其变为"仅VIP1可用"。
+---
 
-## 修改的文件
+## 修改的文件（5个）
 
-### 1. PHP 后端逻辑
-**文件**: `inc/functions/shop/inc/discount.php`  
-**位置**: 第142行
+| 文件 | 修改内容 |
+|-----|---------|
+| `term-option.php` | 后台添加"数量限制"输入框 |
+| `discount.php` | VIP1精确匹配 + 数量判断函数 + count_limit字段 |
+| `order.php` | 添加数量限制判断调用 |
+| `main.js` | VIP1精确匹配 + 数量限制判断 |
+| `dis.php` | 添加"满X件可用"标签 |
 
-```php
-// 原代码
-return $_user_data['vip_level'] >= 1;
-
-// 修改后
-return $_user_data['vip_level'] == 1; // 自定义修改：仅VIP1可用，VIP2不叠加此折扣
-```
-
-### 2. JS 前端逻辑
-**文件**: `inc/functions/shop/assets/js/main.js`  
-**位置**: 第790行
-
-```javascript
-// 原代码
-discount_dependency__user_data['vip_level'] < 1
-
-// 修改后
-discount_dependency__user_data['vip_level'] !== 1 // 自定义修改：仅VIP1可用
-```
+---
 
 ## 主题更新后恢复
 
-运行恢复脚本：
+由于修改涉及多行代码，建议保留此目录用于对比恢复。
+
+基础修改可运行：
 ```bash
-cd /www/wwwroot/xingxy.manyuzo.com/wp-content/themes/zibll/custom-projects/vip-discount-fix
 bash restore.sh
 ```
 
-## 修改日期
+复杂修改需手动恢复或查看 git diff。
 
-- 2026-01-27: 首次修改
+---
+
+## 修改日期
+- 2026-01-28: 添加数量限制功能
+- 2026-01-27: VIP折扣互斥修复
